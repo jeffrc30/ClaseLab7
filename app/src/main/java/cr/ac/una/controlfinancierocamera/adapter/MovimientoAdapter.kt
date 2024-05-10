@@ -84,13 +84,28 @@ class MovimientoAdapter (context:Context, movimientos:List<Movimiento>, private 
         dialog.show()
     }
 
-    private fun borrarMovimiento(movimiento: Movimiento) {
+    /*private fun borrarMovimiento(movimiento: Movimiento) {
         val movimientoDao = AppDatabase.getInstance(context).ubicacionDao()
         lifecycleScope.launch {
             withContext(Dispatchers.Default) {
                 movimientoDao.delete(movimiento)
+
             }
+
             notifyDataSetChanged()
         }
+    }*/
+    private fun borrarMovimiento(movimiento: Movimiento) {
+        val movimientoDao = AppDatabase.getInstance(context).ubicacionDao()
+        val movimientos = this
+        lifecycleScope.launch {
+            withContext(Dispatchers.Default) {
+                movimientoDao.delete(movimiento)
+            }
+            movimientos.remove(movimiento) // Suponiendo que movimientos es la lista que alimenta el Adapter
+            notifyDataSetChanged() // Notificar al adapter que los datos han cambiado
+        }
     }
+
+
 }
