@@ -21,7 +21,13 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import cr.ac.una.controlfinancierocamera.db.AppDatabase
 import cr.ac.una.controlfinancierocamera.entity.Movimiento
+import cr.ac.una.jsoncrud.dao.MovimientoDAO
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class EditarMovimientoFragment : Fragment() {
@@ -57,6 +63,10 @@ class EditarMovimientoFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        lateinit var movimientoDao: MovimientoDAO
+        movimientoDao = AppDatabase.getInstance(requireContext()).ubicacionDao()
+
+
         val view = inflater.inflate(R.layout.fragment_editar_movimiento, container, false)
         saveButton = view.findViewById(R.id.saveMovimientoButtonEditar)
         cancelButton = view.findViewById(R.id.cancelButtonEditar)
@@ -89,7 +99,39 @@ class EditarMovimientoFragment : Fragment() {
         }
 
         saveButton.setOnClickListener {
-            mostrarConfirmacionGuardar()
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Confirmación")
+            builder.setMessage("¿Estás seguro de que quieres guardar la edición?")
+            builder.setPositiveButton("Sí") { dialogInterface: DialogInterface, _: Int ->
+                // Lógica para guardar el movimiento aquí
+                //guardarMovimiento()
+
+                val nuevoMonto = montoEditText.text.toString().toDouble()
+                val nuevaFecha = datePicker.dayOfMonth.toString() + "/" + datePicker.month.toString() + "/" + datePicker.year.toString()
+                val nuevoTipo = tipoMovimientoSpinner.selectedItem.toString()
+                //val bitmap: Bitmap = imageView.drawToBitmap()
+                val movimientoActualizado = Movimiento(
+                    movimiento.id,
+                    nuevoMonto,
+                    nuevoTipo,
+                    nuevaFecha,
+                )
+                lifecycleScope.launch {
+                    withContext(Dispatchers.Default) {
+                        movimientoDao.update(movimientoActualizado)
+                        fragmentManager?.popBackStack()
+                    }
+                }
+
+
+                dialogInterface.dismiss() // Cerrar el diálogo
+            }
+            builder.setNegativeButton("No") { dialogInterface: DialogInterface, _: Int ->
+                dialogInterface.dismiss() // Cerrar el diálogo
+            }
+            val dialog = builder.create()
+            dialog.show()
+            //mostrarConfirmacionGuardar()
         }
 
         cancelButton.setOnClickListener {
