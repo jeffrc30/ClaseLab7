@@ -82,17 +82,17 @@ class MovimientoAdapter (context:Context, movimientos:List<Movimiento>):
     }
 
     private fun borrarMovimiento(movimiento: Movimiento) {
-        val mainActivity = context as MainActivity
+        /*val mainActivity = context as MainActivity
         GlobalScope.launch(Dispatchers.Main) {
             mainActivity.movimientoController.deleteMovimiento(movimiento)
             clear()
             addAll(mainActivity.movimientoController.listMovimientos())
             notifyDataSetChanged()
-        }
+        }*/
     }
 
-    private fun logMovimientoInfo(movimiento: Movimiento){
+    /*private fun logMovimientoInfo(movimiento: Movimiento){
         val logMessage = "UUID: ${movimiento._uuid}, Monto: ${movimiento.monto}, Tipo: ${movimiento.tipo}, Fecha: ${movimiento.fecha}, Imagen: ${movimiento.img}"
         println(logMessage)
-    }
+    }*/
 }

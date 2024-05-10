@@ -70,7 +70,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textFechaEditar" />
 
         <EditText
-            android:id="@+id/textMontoEditar"
+            android:id="@+id/textMonto"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -92,7 +92,7 @@
             android:text="Tipo:"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textMontoEditar" />
+            app:layout_constraintTop_toBottomOf="@+id/textMonto" />
 
         <Spinner
             android:id="@+id/tipoMovimientoSpinnerEditar"
@@ -101,7 +101,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="187dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textMontoEditar" />
+            app:layout_constraintTop_toBottomOf="@+id/textMonto" />
 
         <TextView
             android:id="@+id/tvImagen"

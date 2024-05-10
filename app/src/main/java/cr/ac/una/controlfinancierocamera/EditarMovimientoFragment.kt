@@ -21,11 +21,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.drawToBitmap
 import cr.ac.una.controlfinancierocamera.entity.Movimiento
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
 class EditarMovimientoFragment : Fragment() {
@@ -65,7 +61,7 @@ class EditarMovimientoFragment : Fragment() {
         saveButton = view.findViewById(R.id.saveMovimientoButtonEditar)
         cancelButton = view.findViewById(R.id.cancelButtonEditar)
         tipoMovimientoSpinner = view.findViewById(R.id.tipoMovimientoSpinnerEditar)
-        montoEditText = view.findViewById(R.id.textMontoEditar)
+        montoEditText = view.findViewById(R.id.textMonto)
         datePicker = view.findViewById(R.id.textFechaEditar)
         imageView = view.findViewById<ImageView>(R.id.imageView)
 
@@ -147,7 +143,7 @@ class EditarMovimientoFragment : Fragment() {
     }
 
     private fun guardarMovimiento() {
-        val nuevoMonto = montoEditText.text.toString().toDouble()
+        /*val nuevoMonto = montoEditText.text.toString().toDouble()
         val nuevaFecha = datePicker.dayOfMonth.toString() + "/" + datePicker.month.toString() + "/" + datePicker.year.toString()
         val nuevoTipo = tipoMovimientoSpinner.selectedItem.toString()
         val bitmap: Bitmap = imageView.drawToBitmap()
@@ -170,6 +166,6 @@ class EditarMovimientoFragment : Fragment() {
         }
         // Actualizar los datos del movimiento con los valores del formulario
         //val fragmentManager = requireActivity().supportFragmentManager
-        //fragmentManager.popBackStack()
+        //fragmentManager.popBackStack()*/
     }
 }

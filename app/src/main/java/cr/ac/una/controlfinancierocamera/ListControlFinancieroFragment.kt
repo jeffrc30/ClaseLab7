@@ -1,6 +1,7 @@
 package cr.ac.menufragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,9 @@ import cr.ac.una.controlfinancierocamera.IngresarMovimientoFragment
 import cr.ac.una.controlfinancierocamera.MainActivity
 import cr.ac.una.controlfinancierocamera.R
 import cr.ac.una.controlfinancierocamera.controller.MovimientoController
+import cr.ac.una.controlfinancierocamera.db.AppDatabase
+import cr.ac.una.controlfinancierocamera.entity.Movimiento
+import cr.ac.una.jsoncrud.dao.MovimientoDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,10 +27,15 @@ private const val ARG_PARAM1 = "param1"
 
 
 class ListControlFinancieroFragment : Fragment() {
+    private lateinit var movimientoDao: MovimientoDAO
+    //no se que hace el TAG
+    companion object {
+        private const val TAG = "ListControlFinancieroFragment" // Definir TAG como una constante en el companion object
+    }
     // TODO: Rename and change types of parameters
     private var param1: String? = null
-    lateinit var adapter: MovimientoAdapter
-    val movimientoController = MovimientoController()
+    //lateinit var adapter: MovimientoAdapter
+    //val movimientoController = MovimientoController()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +44,6 @@ class ListControlFinancieroFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
 
         }
-
-
     }
 
     override fun onCreateView(
@@ -44,11 +51,34 @@ class ListControlFinancieroFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_control_financiero, container, false)
+        //return inflater.inflate(R.layout.fragment_list_control_financiero, container, false)
+        val view = inflater.inflate(R.layout.fragment_list_control_financiero, container, false)
+        movimientoDao = AppDatabase.getInstance(requireContext()).ubicacionDao()
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val listView = view.findViewById<ListView>(R.id.listaMovimientos)
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            try {
+                val ubicaciones = withContext(Dispatchers.Default) {
+                    movimientoDao.getAll() // Obtener los datos de la base de datos
+                }
+                val adapter = MovimientoAdapter(requireContext(), ubicaciones as List<Movimiento>)
+                listView.adapter = adapter
+            } catch (e: Exception) {
+                // Manejar errores adecuadamente, como mostrar un mensaje de error al usuario
+                Log.e(TAG, "Error al cargar datos desde la base de datos: ${e.message}")
+            }
+        }
+
         val botonNuevo = view.findViewById<Button>(R.id.botonIngresar)
+        botonNuevo.setOnClickListener {
+            insertEntity()
+        }
+        /*val botonNuevo = view.findViewById<Button>(R.id.botonIngresar)
         botonNuevo.setOnClickListener {
             insertEntity()
         }
@@ -59,7 +89,7 @@ class ListControlFinancieroFragment : Fragment() {
                 adapter = MovimientoAdapter(requireContext(), movimientoController.listMovimientos())
                 list.adapter = adapter
             }
-        }
+        }*/
     }
 
     private fun insertEntity() {

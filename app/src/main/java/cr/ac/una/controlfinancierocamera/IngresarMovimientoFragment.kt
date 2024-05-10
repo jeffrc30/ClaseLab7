@@ -21,11 +21,13 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.drawToBitmap
+import androidx.lifecycle.lifecycleScope
+import cr.ac.una.controlfinancierocamera.db.AppDatabase
 import cr.ac.una.controlfinancierocamera.entity.Movimiento
+import cr.ac.una.jsoncrud.dao.MovimientoDAO
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class IngresarMovimientoFragment : Fragment() {
@@ -63,9 +65,12 @@ class IngresarMovimientoFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lateinit var movimientoDao: MovimientoDAO
+        movimientoDao = AppDatabase.getInstance(requireContext()).ubicacionDao()
+
         val botonNuevo = view.findViewById<Button>(R.id.saveMovimientoButtonEditar)
 
-        monto = view.findViewById<TextView>(R.id.textMontoEditar)
+        monto = view.findViewById<TextView>(R.id.textMonto)
         datePicker = view.findViewById(R.id.datePicker)
 
       //  fecha = view.findViewById<TextView>(R.id.textFechaEditar)
@@ -78,7 +83,21 @@ class IngresarMovimientoFragment : Fragment() {
                 .setMessage("¿Deseas ingresar este movimiento?")
                 .setPositiveButton("Sí") { dialog, which ->
                     // Usuario ha confirmado, guarda el movimiento
-                    guardarMovimiento()
+                    var montoFinal = decimales(monto)
+                    val day = datePicker.dayOfMonth
+                    val month = datePicker.month + 1 // El mes se devuelve como un valor base 0, por lo que debes sumar 1
+                    val year = datePicker.year
+
+                    val fechaSeleccionada = "$day/$month/$year"
+
+                    val movimiento = Movimiento(null, montoFinal, elementoSeleccionado, fechaSeleccionada)
+
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.Default) {
+                            movimientoDao.insert(movimiento)
+                            fragmentManager?.popBackStack()
+                        }
+                    }
                 }
                 .setNegativeButton("No", null)
                 .create()
@@ -134,24 +153,6 @@ class IngresarMovimientoFragment : Fragment() {
 
     }
 
-    private fun guardarMovimiento() {
-        val movimiento = Movimiento(
-            null,
-            monto.text.toString().toDouble(),
-            elementoSeleccionado,
-            datePicker.dayOfMonth.toString() + "/" + datePicker.month.toString() + "/" + datePicker.year.toString(),
-            //fecha.text.toString(),
-            img.drawToBitmap()
-        )
-        val actividad = activity as MainActivity
-        GlobalScope.launch(Dispatchers.IO) {
-            actividad.movimientoController.insertMovimiento(movimiento)
-            // Regresa al fragmento anterior
-            val fragmentManager = requireActivity().supportFragmentManager
-            fragmentManager.popBackStack()
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -176,5 +177,11 @@ class IngresarMovimientoFragment : Fragment() {
                 takePictureLauncher.launch(takePictureIntent)
             }
         }
+    }
+
+    private fun decimales(sMonto: TextView): Double{
+        val montoStr = sMonto.text.toString()
+        val montoDouble = montoStr.toDoubleOrNull() ?: 0.0
+        return String.format("%.2f", montoDouble).toDouble()
     }
 }
