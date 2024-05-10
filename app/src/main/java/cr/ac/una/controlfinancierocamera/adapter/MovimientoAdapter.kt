@@ -12,19 +12,22 @@ import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import cr.ac.menufragment.CameraFragment
 import cr.ac.una.controlfinancierocamera.EditarMovimientoFragment
 import cr.ac.una.controlfinancierocamera.MainActivity
 import cr.ac.una.controlfinancierocamera.R
+import cr.ac.una.controlfinancierocamera.db.AppDatabase
 
 import cr.ac.una.controlfinancierocamera.entity.Movimiento
+import cr.ac.una.jsoncrud.dao.MovimientoDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MovimientoAdapter (context:Context, movimientos:List<Movimiento>):
+class MovimientoAdapter (context:Context, movimientos:List<Movimiento>, private val lifecycleScope: LifecycleCoroutineScope):
     ArrayAdapter<Movimiento>(context,0,movimientos){
 
 
@@ -82,17 +85,12 @@ class MovimientoAdapter (context:Context, movimientos:List<Movimiento>):
     }
 
     private fun borrarMovimiento(movimiento: Movimiento) {
-        /*val mainActivity = context as MainActivity
-        GlobalScope.launch(Dispatchers.Main) {
-            mainActivity.movimientoController.deleteMovimiento(movimiento)
-            clear()
-            addAll(mainActivity.movimientoController.listMovimientos())
+        val movimientoDao = AppDatabase.getInstance(context).ubicacionDao()
+        lifecycleScope.launch {
+            withContext(Dispatchers.Default) {
+                movimientoDao.delete(movimiento)
+            }
             notifyDataSetChanged()
-        }*/
+        }
     }
-
-    /*private fun logMovimientoInfo(movimiento: Movimiento){
-        val logMessage = "UUID: ${movimiento._uuid}, Monto: ${movimiento.monto}, Tipo: ${movimiento.tipo}, Fecha: ${movimiento.fecha}, Imagen: ${movimiento.img}"
-        println(logMessage)
-    }*/
 }

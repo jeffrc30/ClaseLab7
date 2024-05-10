@@ -28,15 +28,11 @@ private const val ARG_PARAM1 = "param1"
 
 class ListControlFinancieroFragment : Fragment() {
     private lateinit var movimientoDao: MovimientoDAO
-    //no se que hace el TAG
     companion object {
         private const val TAG = "ListControlFinancieroFragment" // Definir TAG como una constante en el companion object
     }
     // TODO: Rename and change types of parameters
     private var param1: String? = null
-    //lateinit var adapter: MovimientoAdapter
-    //val movimientoController = MovimientoController()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +62,7 @@ class ListControlFinancieroFragment : Fragment() {
                 val ubicaciones = withContext(Dispatchers.Default) {
                     movimientoDao.getAll() // Obtener los datos de la base de datos
                 }
-                val adapter = MovimientoAdapter(requireContext(), ubicaciones as List<Movimiento>)
+                val adapter = MovimientoAdapter(requireContext(), ubicaciones as List<Movimiento>, lifecycleScope)
                 listView.adapter = adapter
             } catch (e: Exception) {
                 // Manejar errores adecuadamente, como mostrar un mensaje de error al usuario
@@ -78,18 +74,6 @@ class ListControlFinancieroFragment : Fragment() {
         botonNuevo.setOnClickListener {
             insertEntity()
         }
-        /*val botonNuevo = view.findViewById<Button>(R.id.botonIngresar)
-        botonNuevo.setOnClickListener {
-            insertEntity()
-        }
-        lifecycleScope.launch {
-            withContext(Dispatchers.Main) {
-                movimientoController.listMovimientos()
-                val list = view.findViewById<ListView>(R.id.listaMovimientos)
-                adapter = MovimientoAdapter(requireContext(), movimientoController.listMovimientos())
-                list.adapter = adapter
-            }
-        }*/
     }
 
     private fun insertEntity() {
@@ -100,10 +84,5 @@ class ListControlFinancieroFragment : Fragment() {
         transaction.addToBackStack(null) // Agrega la transacción a la pila de retroceso
         transaction.commit()
 
-    }
-
-    fun actualizarData() {
-        val mainActivity = context as MainActivity
-        //mainActivity.adapter.notifyDataSetChanged()
     }
 }

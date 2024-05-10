@@ -22,18 +22,4 @@ interface MovimientoDAO {
 
     @Delete
     fun delete(entity: Movimiento)
-        /*@GET("movimiento")
-        suspend fun getItems(): Movimientos
-
-        @GET("movimiento/{uuid}")
-        suspend fun getItem(@Path("uuid") uuid: String): Movimiento
-
-        @POST("movimiento")
-        suspend fun createItem( @Body items: List<Movimiento>): Movimientos
-
-        @PUT("movimiento/{uuid}")
-        suspend fun updateItem(@Path("uuid") uuid: String, @Body item: Movimiento): Movimiento
-
-        @DELETE("movimiento/{uuid}")
-        suspend fun deleteItem(@Path("uuid") uuid: String)*/
 }

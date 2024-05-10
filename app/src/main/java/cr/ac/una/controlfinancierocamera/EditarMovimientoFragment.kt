@@ -167,47 +167,4 @@ class EditarMovimientoFragment : Fragment() {
             }
         }
     }
-
-    private fun mostrarConfirmacionGuardar() {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Confirmación")
-        builder.setMessage("¿Estás seguro de que quieres guardar la edición?")
-        builder.setPositiveButton("Sí") { dialogInterface: DialogInterface, _: Int ->
-            // Lógica para guardar el movimiento aquí
-            guardarMovimiento()
-            dialogInterface.dismiss() // Cerrar el diálogo
-        }
-        builder.setNegativeButton("No") { dialogInterface: DialogInterface, _: Int ->
-            dialogInterface.dismiss() // Cerrar el diálogo
-        }
-        val dialog = builder.create()
-        dialog.show()
-    }
-
-    private fun guardarMovimiento() {
-        /*val nuevoMonto = montoEditText.text.toString().toDouble()
-        val nuevaFecha = datePicker.dayOfMonth.toString() + "/" + datePicker.month.toString() + "/" + datePicker.year.toString()
-        val nuevoTipo = tipoMovimientoSpinner.selectedItem.toString()
-        val bitmap: Bitmap = imageView.drawToBitmap()
-       // val nuevoImg = obtenerBitmapDesdeImageView(imageView)
-
-
-        val movimientoActualizado = Movimiento(
-            movimiento._uuid,
-            nuevoMonto,
-            nuevoTipo,
-            nuevaFecha,
-            bitmap,
-        )
-        val actividad = activity as MainActivity
-        GlobalScope.launch(Dispatchers.IO) {
-            actividad.movimientoController.editarMovimiento(movimientoActualizado)
-            // Regresa al fragmento anterior
-            val fragmentManager = requireActivity().supportFragmentManager
-            fragmentManager.popBackStack()
-        }
-        // Actualizar los datos del movimiento con los valores del formulario
-        //val fragmentManager = requireActivity().supportFragmentManager
-        //fragmentManager.popBackStack()*/
-    }
 }
