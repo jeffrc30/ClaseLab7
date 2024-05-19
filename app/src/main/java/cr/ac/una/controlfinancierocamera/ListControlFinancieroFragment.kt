@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ListView
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import cr.ac.una.controlfinanciero.adapter.MovimientoAdapter
 import cr.ac.una.controlfinancierocamera.IngresarMovimientoFragment
@@ -16,6 +17,7 @@ import cr.ac.una.controlfinancierocamera.R
 import cr.ac.una.controlfinancierocamera.controller.MovimientoController
 import cr.ac.una.controlfinancierocamera.db.AppDatabase
 import cr.ac.una.controlfinancierocamera.entity.Movimiento
+import cr.ac.una.controlfinancierocamera.view.MovimientoViewModel
 import cr.ac.una.jsoncrud.dao.MovimientoDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,9 +58,18 @@ class ListControlFinancieroFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val listView = view.findViewById<ListView>(R.id.listaMovimientos)
+        var movimientoViewModel = ViewModelProvider(requireActivity()).get(MovimientoViewModel::class.java)
+        var movimientos1 = mutableListOf<Movimiento>()
+        var adapter = MovimientoAdapter(requireContext(), movimientos1 as ArrayList<Movimiento>, lifecycleScope)
+        listView.adapter = adapter
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            try {
+        movimientoViewModel.movimientoView.observe(requireActivity()){
+            adapter.clear()
+            adapter.addAll(it)
+        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            movimientoViewModel.updateDatos(movimientoDao)
+            /*try {
                 val ubicaciones = withContext(Dispatchers.Default) {
                     movimientoDao.getAll() // Obtener los datos de la base de datos
                 }
@@ -66,8 +77,9 @@ class ListControlFinancieroFragment : Fragment() {
                 listView.adapter = adapter
             } catch (e: Exception) {
                 // Manejar errores adecuadamente, como mostrar un mensaje de error al usuario
-                Log.e(TAG, "Error al cargar datos desde la base de datos: ${e.message}")
-            }
+               Log.e(TAG, "Error al cargar datos desde la base de datos: ${e.message}")
+            }*/
+
         }
 
         val botonNuevo = view.findViewById<Button>(R.id.botonIngresar)
